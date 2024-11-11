@@ -15,13 +15,16 @@ import java.util.stream.IntStream;
 
 @Service
 public class BalotaService {
+
     @Autowired
     private BalotaRepository balotaRepository;
 
-    // Usamos un ScheduledExecutorService para manejar la ejecución periódica
+    @Autowired
+    private WebSocketService webSocketService;  // Inyecta el servicio WebSocket
+
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    // Generar todas las balotas y guardarlas en la base de datos
+    // Método para generar todas las balotas y guardarlas en la base de datos
     public void generarBalotas() {
         List<Balota> balotas = IntStream.rangeClosed(1, 75)
                 .mapToObj(numero -> {
@@ -36,16 +39,15 @@ public class BalotaService {
 
     // Obtener todas las balotas desde la base de datos
     public List<Balota> obtenerBalotas() {
-        return balotaRepository.findAll();
+        return balotaRepository.findAll();  // Este método obtiene todas las balotas de la base de datos
     }
 
     // Iniciar el sorteo de balotas, sacando una balota aleatoria cada 5 segundos
     public void iniciarSorteoDeBalotas() {
         scheduler.scheduleAtFixedRate(() -> {
-            // Lógica para sacar una balota aleatoria y marcarla como sacada
             List<Balota> balotasNoSacadas = balotaRepository.findAll().stream()
                     .filter(balota -> !balota.isSacada()) // Filtrar balotas no sacadas
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (!balotasNoSacadas.isEmpty()) {
                 Random random = new Random();
@@ -54,7 +56,7 @@ public class BalotaService {
                 balotaRepository.save(balotaSacada); // Guardar la balota como sacada
 
                 System.out.println("Balota sacada: " + balotaSacada.getNumero());
-                // Aquí podrías agregar lógica adicional, como enviar actualizaciones a los jugadores.
+                webSocketService.enviarBalota(balotaSacada.getNumero());  // Enviar la balota a todos los clientes usando WebSocket
             } else {
                 System.out.println("No hay más balotas disponibles para sacar.");
                 detenerSorteoDeBalotas(); // Detener el sorteo si no hay más balotas
@@ -69,4 +71,6 @@ public class BalotaService {
 
     // Otros métodos para gestionar las balotas
 }
+
+
 

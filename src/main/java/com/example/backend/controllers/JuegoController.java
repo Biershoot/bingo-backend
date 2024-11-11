@@ -1,6 +1,7 @@
 package com.example.backend.controllers;
 
 import com.example.backend.Juego;
+import com.example.backend.models.Tarjeton;
 import com.example.backend.services.JuegoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ public class JuegoController {
     public ResponseEntity<List<Juego>> obtenerTodosLosJuegos() {
         List<Juego> juegos = juegoService.obtenerTodosLosJuegos();
         return ResponseEntity.ok(juegos);
+
     }
+
 }
 
