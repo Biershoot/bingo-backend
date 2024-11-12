@@ -12,3 +12,4 @@ Autenticación y manejo de usuarios con seguridad optimizada.
 Generación aleatoria de tarjetones de bingo sin números repetidos.
 Lógica de juego en tiempo real con opciones para iniciar partidas y verificar ganadores.
 Gestión de partidas, balotas y resultados almacenados en la base de datos.
+Video Explicativo:https://youtu.be/0xkr0thdu6U
